@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ArceLabs Interactive Landing Page</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;family=Inter:wght@400;600;800&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // A nice tech blue
+                        "background-light": "#f0f0f0",
+                        "background-dark": "#050505", // Deep black
+                        "accent-cyan": "#00d4ff",
+                        "accent-orange": "#ff9900",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        mono: ["Space Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .content-layer {
+            position: relative;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .interactive-element {
+            pointer-events: auto;
+        }
+
+        /* Glassmorphism HUD */
+        .hud-glass {
+            background: rgba(5, 5, 5, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 212, 255, 0.1);
+        }
+
+        .hud-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, #00d4ff, transparent);
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300 antialiased overflow-hidden">
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Header -->
+    <header class="content-layer w-full p-6 flex justify-between items-center fixed top-0 left-0">
+        <div class="text-sm font-mono tracking-widest uppercase opacity-70">
+            ArceLabs_System_v2.0
+        </div>
+        <nav>
+            <a class="interactive-element text-sm font-mono hover:text-primary transition-colors opacity-70 hover:opacity-100"
+                href="#">
+                [Menu]
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="content-layer flex-grow flex flex-col justify-center items-center relative w-full h-screen">
+        <h1 class="sr-only">ArceLabs</h1>
+
+        <!-- Loading State -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none" id="loading">
+            <span class="font-mono text-xs animate-pulse opacity-50">Initializing Particle System...</span>
+        </div>
+
+        <!-- Holographic HUD -->
+        <div
+            class="absolute top-1/2 right-10 transform -translate-y-1/2 w-80 interactive-element hidden md:block animate-float">
+            <div class="hud-glass rounded-lg p-6 relative overflow-hidden">
+                <!-- Decorative scanline -->
+                <div
+                    class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent-cyan to-transparent opacity-30">
+                </div>
+
+                <h2 class="font-mono text-xs text-accent-cyan tracking-widest mb-4 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-accent-cyan animate-pulse"></span>
+                    PROFILE_STATS
+                </h2>
+
+                <div class="space-y-4 pl-4 hud-line relative">
+                    <!-- Stat 1 -->
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wider opacity-50 font-mono">Certifications</p>
+                        <p class="text-sm font-bold flex items-center gap-2">
+                            5+ Completed
+                            <span class="text-xs font-normal opacity-70">(Coursera, Platzi)</span>
+                        </p>
+                    </div>
+
+                    <!-- Stat 2 -->
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wider opacity-50 font-mono">Impact</p>
+                        <p class="text-sm font-bold">Kaggle Contributor</p>
+                        <p class="text-xs opacity-70">Data Science & ML Datasets</p>
+                    </div>
+
+                    <!-- Stat 3 -->
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wider opacity-50 font-mono">Deployed</p>
+                        <p class="text-sm font-bold text-accent-orange">1 Published App</p>
+                        <a href="https://play.google.com/store/apps/details?id=com.ArceLab.German" target="_blank"
+                            class="text-[10px] underline opacity-70 hover:text-accent-cyan transition-colors">View on
+                            Play Store</a>
+                    </div>
+                </div>
+
+                <!-- Footer decorative bits -->
+                <div class="mt-6 flex justify-between items-center opacity-30 font-mono text-[10px]">
+                    <span>SEC_CLR: Lvl 1</span>
+                    <span>ID: ARCE-001</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="content-layer fixed bottom-0 left-0 w-full p-8 flex flex-col items-center gap-4">
+        <p class="font-mono text-xs md:text-sm tracking-widest text-center opacity-80">
+            Connect: <a href="https://www.linkedin.com/in/kevarce/" target="_blank"
+                class="hover:text-accent-cyan interactive-element transition-colors">LinkedIn</a> // <a
+                href="https://github.com/KevinArce/" target="_blank"
+                class="hover:text-accent-cyan interactive-element transition-colors">GitHub</a>
+        </p>
+        <a class="interactive-element font-mono text-xs opacity-50 hover:opacity-100 transition-opacity hover:text-accent-cyan"
+            href="#">
+            (fork this repo)
+        </a>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 100 };
+
+        // Configuration
+        const texts = ["ArceLabs", "Backend Engineer", "Math Lover", "Innovator"];
+        let currentTextIndex = 0;
+        const fontSize = 100; // Slightly smaller to fit longer words
+        const fontFamily = 'Inter, sans-serif';
+        const fontWeight = '900';
+        let lastTime = 0;
+        const textCycleInterval = 4000; // Change text every 4 seconds
+
+        // Initialize Canvas Size
+        function initSize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        initSize();
+
+        // Particle Class
+        class Particle {
+            constructor(x, y) {
+                this.x = Math.random() * width; // Start random
+                this.y = Math.random() * height;
+                this.targetX = x;
+                this.targetY = y;
+                this.size = Math.random() * 2 + 1;
+                this.density = (Math.random() * 30) + 1;
+                // Color variations
+                const colors = ['#ffffff', '#e0e0e0', '#00d4ff', '#3b82f6'];
+                this.baseColor = colors[Math.floor(Math.random() * colors.length)];
+                this.color = this.baseColor;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            update() {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let forceDirectionX = dx / distance;
+                let forceDirectionY = dy / distance;
+                let maxDistance = mouse.radius;
+                let force = (maxDistance - distance) / maxDistance;
+                let directionX = forceDirectionX * force * this.density;
+                let directionY = forceDirectionY * force * this.density;
+
+                if (distance < mouse.radius && mouse.x !== null) {
+                    this.x -= directionX * 5; // Repel force
+                    this.y -= directionY * 5;
+                    this.color = '#ff9900'; // Orange accent
+                } else {
+                    if (this.x !== this.targetX) {
+                        let dx = this.x - this.targetX;
+                        this.x -= dx / 20; // Smoother return speed
+                    }
+                    if (this.y !== this.targetY) {
+                        let dy = this.y - this.targetY;
+                        this.y -= dy / 20;
+                    }
+                    if (this.color !== this.baseColor) {
+                        this.color = this.baseColor;
+                    }
+                }
+            }
+        }
+
+        // Get Pixel Data for Text
+        function getCoordinates(text) {
+            // Draw text to off-screen canvas (or reusing main canvas temporarily)
+            // Need to clear specifically for this operation
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = 'white';
+            ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, width / 2, height / 2); // Center of screen
+
+            // Adjust for HUD offset if needed, or keep center 
+            // For now, let's nudge it slightly left if desktop so HUD doesn't overlap perfectly
+            // But main.flex-grow in HTML is centering items, let's keep it centered for now.
+
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const coordinates = [];
+
+            for (let y = 0, y2 = imageData.height; y < y2; y += 4) {
+                for (let x = 0, x2 = imageData.width; x < x2; x += 4) {
+                    if (imageData.data[(y * 4 * imageData.width) + (x * 4) + 3] > 128) {
+                        // Add some noise
+                        let posX = x + (Math.random() - 0.5) * 5;
+                        let posY = y + (Math.random() - 0.5) * 5;
+                        coordinates.push({ x: posX, y: posY });
+                    }
+                }
+            }
+            return coordinates;
+        }
+
+        // Update Particles to new Text
+        function updateParticles(text) {
+            const coords = getCoordinates(text);
+
+            // If we have more coords than particles, add new ones
+            if (coords.length > particles.length) {
+                for (let i = particles.length; i < coords.length; i++) {
+                    let p = new Particle(Math.random() * width, Math.random() * height);
+                    p.targetX = coords[i].x;
+                    p.targetY = coords[i].y;
+                    particles.push(p);
+                }
+            }
+
+            // Update targets for existing particles
+            for (let i = 0; i < coords.length; i++) {
+                particles[i].targetX = coords[i].x;
+                particles[i].targetY = coords[i].y;
+            }
+
+            // If we have fewer coords, scramble the extras to background
+            if (coords.length < particles.length) {
+                for (let i = coords.length; i < particles.length; i++) {
+                    particles[i].targetX = Math.random() * width;
+                    particles[i].targetY = Math.random() * height;
+                }
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            // Initial fill with random particles
+            for (let i = 0; i < 3000; i++) {
+                particles.push(new Particle(Math.random() * width, Math.random() * height));
+            }
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Animation Loop
+        function animate(timeStamp) {
+            ctx.clearRect(0, 0, width, height);
+
+            // Handle Text Cycling
+            if (!lastTime) lastTime = timeStamp;
+            const deltaTime = timeStamp - lastTime;
+
+            if (deltaTime > textCycleInterval) {
+                currentTextIndex = (currentTextIndex + 1) % texts.length;
+                updateParticles(texts[currentTextIndex]);
+                lastTime = timeStamp;
+            }
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].draw();
+                particles[i].update();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // Event Listeners
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+
+        window.addEventListener('resize', () => {
+            initSize();
+            // Recalculate current text position on resize
+            updateParticles(texts[currentTextIndex]);
+        });
+
+        // Initialize
+        document.fonts.ready.then(function () {
+            initParticles();
+            // Set initial text
+            updateParticles(texts[0]);
+            requestAnimationFrame(animate);
+        });
+
+        // Force Dark Mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
+</body>
+
+</html>
