@@ -16,7 +16,7 @@ A next-generation, sci-fi themed landing page featuring a holographic HUD and a 
 
 1.  **Clone the repo** (or fork it!):
     ```bash
-    git clone https://github.com/yourusername/interactive-landing-page.git
+    git clone https://github.com/KevinArce/ArceLabs-Landing.git
     ```
 2.  **Open `code.html`** in your browser. That's it!
 
